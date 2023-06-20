@@ -1,0 +1,2 @@
+# Logger
+Simple Logging Class
