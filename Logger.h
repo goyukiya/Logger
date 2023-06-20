@@ -35,10 +35,12 @@ protected:
 	void writeToFile();
 
 public:
-	/** constructor 
+	/** constructor. */
+	Logger();
+	/** open a file for writing the log.
 	 * \param filepath the path to the log file.
 	 */
-	Logger(std::string filepath);
+	void open(std::string filepath);
 	/* destructor. */
 	~Logger();
 	/** close the logger. */

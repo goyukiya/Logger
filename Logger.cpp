@@ -4,37 +4,46 @@
 
 void Logger::writeToFile()
 {
-	while (isRunning)
-	{
-		std::unique_lock<std::mutex> lck(mtx);
+    while (isRunning)
+    {
+        std::unique_lock<std::mutex> lck(mtx);
         // wait for queued message
-		cv.wait(lck, [&] { return !messageDeque.empty(); });
+        cv.wait(lck, [&]{ return !messageDeque.empty(); });
         // write the message at the front
-		std::string msg = messageDeque.front();
-		messageDeque.pop_front();
-		logF << msg << std::endl;
-	}
+        std::string msg = messageDeque.front();
+        messageDeque.pop_front();
+        logF << msg << std::endl;
+    }
 }
 
-Logger::Logger(std::string filepath): logF(filepath), loggingMode(1), isRunning(false)
+Logger::Logger(): loggingMode(0), isRunning(false)
+{}
+
+void Logger::open(std::string filepath)
 {
+    logF.open(filepath);
     if (logF.is_open())
     {
+        loggingMode= 1;
         isRunning = true;
         // start thread
         std::thread thr(&Logger::writeToFile, this);
         writerThread = std::move(thr);
-        writerThread.detach(); // background task
+        // background task
+        writerThread.detach(); 
     }
-    else throw std::exception("Logger:FailedToOpenFile");
+    else
+        throw std::exception("Logger:FailedToOpenFile");
 }
 
 Logger::~Logger()
 {
     // stop the thread if running
-    if (isRunning) close();
+    if (isRunning)
+        close();
     // close the filestream if open
-    if (logF.is_open()) logF.close();
+    if (logF.is_open())
+        logF.close();
 }
 
 void Logger::close()
@@ -58,7 +67,7 @@ void Logger::log(std::string msg)
 
 void Logger::setLogging(unsigned int mode)
 {
-    loggingMode = mode;
+    loggingMode = (mode>0)? 1: 0;
 }
 
 // eof
