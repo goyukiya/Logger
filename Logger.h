@@ -15,41 +15,41 @@
  */
 class Logger
 {
-	/** output filestream. */
+	/** Output filestream. */
 	std::ofstream logF;
-	/** logging mode. */
+	/** Logging mode. */
 	unsigned int loggingMode;
-	/** deque of messages. */
+	/** Deque of messages. */
 	std::deque<std::string> messageDeque;
-	/** thread for file writting. */
+	/** Thread for file writting. */
 	std::thread writerThread;
-	/** lock for shared ressources. */
+	/** Lock for shared ressources. */
 	std::mutex mtx;
-	/** thread synchronization variable. */
+	/** Thread synchronization variable. */
 	std::condition_variable cv;
-	/** logger status. */
+	/** Logger status. */
 	bool isRunning;
 
 protected:
-	/** write message from the deque to the file. */
+	/** Write message from the deque to the file. */
 	void writeToFile();
 
 public:
-	/** constructor. */
+	/** Constructor. */
 	Logger();
-	/** open a file for writing the log.
+	/** Open a file for writing the log.
 	 * \param filepath the path to the log file.
 	 */
 	void open(std::string filepath);
-	/* destructor. */
+	/** Destructor. */
 	~Logger();
-	/** close the logger. */
+	/** Close the logger. */
 	void close();
-	/** log a message
+	/** Log a message
 	 * \param msg the message to write in the log.
 	 */
 	void log(std::string msg);
-	/** set the logging mode.
+	/** Set the logging mode.
 	 * \param mode the logging mode. 1 for file+console, 0 for console only.
 	 */
 	void setLogging(unsigned int mode);

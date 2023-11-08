@@ -2,6 +2,10 @@
 
 #include <exception>
 
+// ---------------------------------------------------------------------------------
+//			Protected methods
+// ---------------------------------------------------------------------------------
+
 void Logger::writeToFile()
 {
     while (isRunning)
@@ -16,24 +20,27 @@ void Logger::writeToFile()
     }
 }
 
+// ---------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------
+
 Logger::Logger(): loggingMode(0), isRunning(false)
 {}
 
 void Logger::open(std::string filepath)
 {
     logF.open(filepath);
-    if (logF.is_open())
-    {
-        loggingMode= 1;
-        isRunning = true;
-        // start thread
-        std::thread thr(&Logger::writeToFile, this);
-        writerThread = std::move(thr);
-        // background task
-        writerThread.detach(); 
-    }
-    else
+    // check if failed
+    if (!logF.is_open())
         throw std::exception("Logger:FailedToOpenFile");
+    // logging to file
+    loggingMode= 1;
+    isRunning = true;
+    // start thread
+    std::thread thr(&Logger::writeToFile, this);
+    writerThread = std::move(thr);
+    // background task
+    writerThread.detach();     
 }
 
 Logger::~Logger()
@@ -53,7 +60,7 @@ void Logger::close()
 
 void Logger::log(std::string msg)
 {
-    if (loggingMode)
+    if (isRunning && loggingMode)
     {
         // push the message in the deque with ressource locking
         std::unique_lock<std::mutex> lck(mtx);
@@ -67,7 +74,7 @@ void Logger::log(std::string msg)
 
 void Logger::setLogging(unsigned int mode)
 {
-    loggingMode = (mode>0)? 1: 0;
+    loggingMode = (mode > 0) ? 1 : 0;
 }
 
 // eof
