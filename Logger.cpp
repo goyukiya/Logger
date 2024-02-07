@@ -27,6 +27,11 @@ void Logger::writeToFile()
 Logger::Logger(): loggingMode(0), isRunning(false)
 {}
 
+Logger::Logger(std::string filepath): Logger()
+{     
+    open(filepath);
+}
+
 void Logger::open(std::string filepath)
 {
     logF.open(filepath);

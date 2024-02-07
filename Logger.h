@@ -37,6 +37,8 @@ protected:
 public:
 	/** Constructor. */
 	Logger();
+	/** Constructor. */
+	Logger(std::string filepath);
 	/** Open a file for writing the log.
 	 * \param filepath the path to the log file.
 	 */
